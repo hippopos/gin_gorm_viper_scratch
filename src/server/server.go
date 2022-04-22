@@ -2,32 +2,28 @@ package server
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"sync"
 
 	"scratch/src/config"
 	"scratch/src/database"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Server struct {
 	Config config.Config
-	Logger *log.Logger
 	Conn   database.Database
 }
 
 func NewServer() *Server {
 	var err error
 	s := new(Server)
-	s.Logger = log.New(os.Stdout, "[bear] ", log.Ldate|log.Lshortfile|log.Ltime)
-	s.Config = config.NewConfig() //初始化配置项
-	s.Logger.Println(s.Config)
+	s.Config = config.NewConfig()                   //初始化配置项
 	s.Conn, err = database.NewDatabase(s.Config.PC) //初始化数据库
 	if err != nil {
 		panic(err.Error())
 	}
-
-	s.Logger.Println("bear server is started")
+	logrus.Println(s.Config)
 	return s
 }
 
