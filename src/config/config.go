@@ -25,6 +25,12 @@ func NewConfig() Config {
 }
 
 func (c *Config) init() {
-	viper.UnmarshalKey("port", &c.Port)
-	viper.UnmarshalKey("postgres", &c.PC)
+
+	c.Port = viper.GetInt("port")
+	c.PC.Host = viper.GetString("postgres.host")
+	c.PC.Port = viper.GetInt("postgres.port")
+	c.PC.User = viper.GetString("postgres.user")
+	c.PC.Password = viper.GetString("postgres.password")
+	c.PC.Database = viper.GetString("postgres.database")
+	c.PC.SSL = viper.GetString("postgres.ssl")
 }

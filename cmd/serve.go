@@ -14,11 +14,20 @@ import (
 
 var (
 	cfgFile string
+
+	port int
+
+	postgresHost     string
+	postgresPort     int
+	postgresUser     string
+	postgresPass     string
+	postgresDatabase string
+	postgresSSL      string
 	//http
 )
 
 func newServeCmd() *cobra.Command {
-	var serveCmd = &cobra.Command{
+	var command = &cobra.Command{
 		Use:   "serve",
 		Short: "Provide API service",
 		// Long:  `All software has versions. This is Scheduler's`,
@@ -27,11 +36,17 @@ func newServeCmd() *cobra.Command {
 	}
 	cobra.OnInitialize(initConfig)
 	//http
-	serveCmd.PersistentFlags().StringVar(&cfgFile, "config", "./config.yaml", "config file (default is ./config.yaml)")
+	command.PersistentFlags().StringVar(&cfgFile, "config", "./config.yaml", "config file (default is ./config.yaml)")
+	command.PersistentFlags().IntVarP(&port, "port", "p", 8099, "restful serve port")
+	command.PersistentFlags().StringVar(&postgresHost, "postgres.host", "localhost", "postgres server ip")
+	command.PersistentFlags().IntVar(&postgresPort, "postgres.port", 5432, "postgres server port")
+	command.PersistentFlags().StringVar(&postgresUser, "postgres.user", "postgres", "postgres server username")
+	command.PersistentFlags().StringVar(&postgresPass, "postgres.password", "postgres", "postgres server password")
+	command.PersistentFlags().StringVar(&postgresDatabase, "postgres.database", "postgres", "postgres database")
+	command.PersistentFlags().StringVar(&postgresSSL, "postgres.ssl", "disable", "postgres disable ssl")
 
-	viper.BindPFlag("config", serveCmd.PersistentFlags().Lookup("config"))
-
-	return serveCmd
+	viper.BindPFlags(command.PersistentFlags())
+	return command
 }
 
 func initConfig() {
