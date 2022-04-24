@@ -6,8 +6,7 @@ import (
 
 	"scratch/src/config"
 	"scratch/src/database"
-
-	"github.com/sirupsen/logrus"
+	"scratch/src/log"
 )
 
 type Server struct {
@@ -23,7 +22,7 @@ func NewServer() *Server {
 	if err != nil {
 		panic(err.Error())
 	}
-	logrus.Println(s.Config)
+	log.Logger.Println(s.Config)
 	return s
 }
 

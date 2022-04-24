@@ -6,11 +6,11 @@ import (
 	"strings"
 
 	"scratch/src/database/schemas"
+	"scratch/src/log"
 
 	page "github.com/Tsui89/utils/page_info"
 	"github.com/Tsui89/utils/response"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
 
 type simpleListHandlers map[string]func(*gin.Context)
@@ -31,7 +31,7 @@ func (s *Server) newSimpleListHandlerInstance(instanceSchema interface{}) func(*
 
 		//反射查询schema类型, 创建filter实例
 		// filter := reflect.New(reflect.TypeOf(instanceSchema)).Interface()
-		// logrus.Println("filter type", reflect.TypeOf(filter)) //filter 类型是: *instanceSchema
+		// log.Logger.Println("filter type", reflect.TypeOf(filter)) //filter 类型是: *instanceSchema
 
 		br := response.NewBaseResponse() //初始化 API response
 		p := page.NewPageInfo(c.Request) //初始化 分页信息
@@ -39,7 +39,7 @@ func (s *Server) newSimpleListHandlerInstance(instanceSchema interface{}) func(*
 		// c.ShouldBind(filter) // 初始化查询条件,加载 http get请求的query param参数 记录在filter中
 
 		queryParams := c.Request.URL.Query()
-		logrus.Println(queryParams)
+		log.Logger.Println(queryParams)
 		data, err := s.List(instanceSchema, queryParams, p)
 		if err != nil {
 			br.Set(400, -1, err.Error(), "获取列表失败")
@@ -60,7 +60,7 @@ func (s *Server) List(instanceSchema interface{}, filterMap map[string][]string,
 	preload = true
 	// 创建元素类型是instanceSchema的slice实例
 	data := reflect.New(reflect.SliceOf(reflect.TypeOf(instanceSchema))).Interface()
-	logrus.Println("data type", reflect.TypeOf(data)) // data 类型是 *[]instanceSchema
+	log.Logger.Println("data type", reflect.TypeOf(data)) // data 类型是 *[]instanceSchema
 
 	//处理query param
 	// var filterStr string
@@ -114,10 +114,10 @@ func (s *Server) List(instanceSchema interface{}, filterMap map[string][]string,
 	//联合查询
 	if preload {
 		dataType := reflect.TypeOf(instanceSchema)
-		logrus.Println("schema type", dataType)
+		log.Logger.Println("schema type", dataType)
 		for i := 0; i < dataType.NumField(); i++ {
 			if v, ok := dataType.Field(i).Tag.Lookup("preload"); ok {
-				logrus.Println("preload", v)
+				log.Logger.Println("preload", v)
 				//多个preload item使用';'分隔.
 				for _, item := range strings.Split(v, ";") {
 					if strings.Trim(item, " ") != "" {
