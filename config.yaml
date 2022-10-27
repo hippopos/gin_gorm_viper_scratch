@@ -1,8 +1,8 @@
 port: 8099 #运行端口
 postgres:
-  host: develop.ruihudata.cn
+  host: 
   port: 5432
   database: test
-  user: ruihu
-  password: ruihudata
+  user: 
+  password: 
   ssl: disable
